@@ -4,6 +4,7 @@ type Kniha = {
   id: number
   ID: string
   IMGURL: string
+  PRODUCT: string
 }
 
 export default async function HomePage() {
