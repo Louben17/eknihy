@@ -10,7 +10,7 @@ type Kniha = {
 export default async function HomePage() {
   const { data: knihy, error } = await supabase
     .from('knihy')
-    .select('id, ID, IMGURL')
+    .select('id, ID, PRODUCT, IMGURL')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -32,6 +32,7 @@ export default async function HomePage() {
               className="w-full h-48 object-cover"
             />
             <div className="p-2 font-medium text-center">{kniha.ID}</div>
+            <div className="p-2 font-medium text-center">{kniha.PRODUCT}</div>
           </div>
         ))}
       </div>
