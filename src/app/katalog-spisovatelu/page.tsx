@@ -10,6 +10,7 @@ interface Autor {
   popis: string;
   narozen: string;
   aktivni: boolean;
+  fotka: string;
 }
 
 // Použití existujících environment proměnných
@@ -83,15 +84,21 @@ export default function KatalogSpisovateluPage() {
       {/* Seznam autorů */}
       {!loading && !error && autori.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {autori.map((autor) => (
-            <div key={autor.id} className="bg-white rounded-lg shadow-md overflow-hidden flex">
-              <div className="w-1/3 flex items-center justify-center p-4 bg-gray-100">
+            <div className="w-1/3 flex items-center justify-center p-4 bg-gray-100">
+              {autor.fotka ? (
+                <img
+                  src={autor.fotka}
+                  alt={autor.jmeno}
+                  className="h-32 w-32 object-cover rounded-full"
+                />
+              ) : (
                 <div className="h-32 w-32 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-16 w-16">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
-              </div>
+              )}
+            </div>
               <div className="w-2/3 p-4">
                 <h3 className="text-xl font-bold mb-1">{autor.jmeno}</h3>
                 {autor.narozen && (
