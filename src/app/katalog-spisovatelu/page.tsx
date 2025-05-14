@@ -12,7 +12,7 @@ interface Autor {
   aktivni: boolean;
 }
 
-// Inicializace Supabase klienta
+// Použití existujících environment proměnných
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -21,10 +21,6 @@ export default function KatalogSpisovateluPage() {
   const [autori, setAutori] = useState<Autor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [aktivniPismeno, setAktivniPismeno] = useState('');
-
-  // Abeceda pro filtrování
-  const abeceda = 'ABCČDEFGHIJKLMNOPQRSTUVWXYZŽ'.split('');
 
   // Fetch data ze Supabase při načtení komponenty
   useEffect(() => {
@@ -32,17 +28,17 @@ export default function KatalogSpisovateluPage() {
       try {
         setLoading(true);
         
-        let query = supabase.from('autori').select('*');
+        // Jednoduchý dotaz bez filtrování
+        const { data, error } = await supabase
+          .from('autori')
+          .select('*');
         
-        // Pokud je zvoleno písmeno, filtrujeme podle něj
-        if (aktivniPismeno) {
-          query = query.ilike('jmeno', `${aktivniPismeno}%`);
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
         }
         
-        const { data, error } = await query;
-        
-        if (error) throw error;
-        
+        console.log('Načtená data:', data); // Zobrazit data v konzoli pro ladění
         setAutori(data as Autor[] || []);
       } catch (err) {
         console.error('Chyba při načítání dat:', err);
@@ -53,48 +49,13 @@ export default function KatalogSpisovateluPage() {
     }
     
     fetchAutori();
-  }, [aktivniPismeno]);
-
-  // Funkce pro změnu filtru podle písmene
-  const handlePismenoFilter = (pismeno: string) => {
-    setAktivniPismeno(pismeno === aktivniPismeno ? '' : pismeno);
-  };
+  }, []);
 
   return (
     <div className="space-y-8">
       <div className="border-b pb-4">
         <h1 className="text-3xl font-bold mb-2">Katalog spisovatelů</h1>
         <p className="text-gray-600">Objevte oblíbené autory a jejich díla.</p>
-      </div>
-
-      {/* Abecední filtr */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <h2 className="text-lg font-semibold mb-2">Filtrovat podle počátečního písmena</h2>
-        <div className="flex flex-wrap gap-2">
-          <button 
-            className={`px-3 py-1 border rounded-md ${
-              aktivniPismeno === '' 
-                ? 'border-blue-600 bg-blue-50 text-blue-600' 
-                : 'border-gray-300 hover:bg-gray-50'
-            }`}
-            onClick={() => setAktivniPismeno('')}
-          >
-            Vše
-          </button>
-          {abeceda.map((pismeno) => (
-            <button 
-              key={pismeno} 
-              className={`px-3 py-1 border rounded-md ${
-                aktivniPismeno === pismeno 
-                  ? 'border-blue-600 bg-blue-50 text-blue-600' 
-                  : 'border-gray-300 hover:bg-gray-50'
-              }`}
-              onClick={() => handlePismenoFilter(pismeno)}
-            >
-              {pismeno}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Stav načítání */}
@@ -115,7 +76,7 @@ export default function KatalogSpisovateluPage() {
       {/* Prázdný výsledek */}
       {!loading && !error && autori.length === 0 && (
         <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-lg">
-          <p>Nenalezeni žádní autoři{aktivniPismeno && ` začínající na písmeno "${aktivniPismeno}"`}.</p>
+          <p>Nenalezeni žádní autoři. Databáze je pravděpodobně prázdná.</p>
         </div>
       )}
 
