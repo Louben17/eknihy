@@ -28,17 +28,17 @@ export default function KatalogSpisovateluPage() {
     async function fetchAutori() {
       try {
         setLoading(true);
-        
+
         // Jednoduchý dotaz bez filtrování
         const { data, error } = await supabase
           .from('autori')
           .select('*');
-        
+
         if (error) {
           console.error('Supabase error:', error);
           throw error;
         }
-        
+
         console.log('Načtená data:', data); // Zobrazit data v konzoli pro ladění
         setAutori(data as Autor[] || []);
       } catch (err) {
@@ -48,7 +48,7 @@ export default function KatalogSpisovateluPage() {
         setLoading(false);
       }
     }
-    
+
     fetchAutori();
   }, []);
 
@@ -83,45 +83,44 @@ export default function KatalogSpisovateluPage() {
 
       {/* Seznam autorů */}
       {!loading && !error && autori.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="w-1/3 flex items-center justify-center p-4 bg-gray-100">
-              {autor.fotka ? (
-                <img
-                  src={autor.fotka}
-                  alt={autor.jmeno}
-                  className="h-32 w-32 object-cover rounded-full"
-                />
-              ) : (
-                <div className="h-32 w-32 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-16 w-16">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-              )}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {autori.map((autor) => (
+      <div key={autor.id} className="flex border rounded-lg overflow-hidden">
+        <div className="w-1/3 flex items-center justify-center p-4 bg-gray-100">
+          {autor.fotka ? (
+            <img
+              src={autor.fotka}
+              alt={autor.jmeno}
+              className="h-32 w-32 object-cover rounded-full"
+            />
+          ) : (
+            <div className="h-32 w-32 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-16 w-16">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             </div>
-              <div className="w-2/3 p-4">
-                <h3 className="text-xl font-bold mb-1">{autor.jmeno}</h3>
-                {autor.narozen && (
-                  <div className="text-sm text-gray-600 mb-2">
-                    {autor.narozen}
-                  </div>
-                )}
-                <p className="text-gray-700 text-sm line-clamp-3">{autor.popis}</p>
-                <div className="mt-3 flex justify-between items-center">
-                  {autor.aktivni ? (
-                    <span className="text-sm text-green-600">Aktivní autor</span>
-                  ) : (
-                    <span className="text-sm text-gray-600">Neaktivní autor</span>
-                  )}
-                  <a href={`/spisovatel/${autor.id}`} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Zobrazit díla
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
+          )}
         </div>
-      )}
-    </div>
-  );
-}
+        <div className="w-2/3 p-4">
+          <h3 className="text-xl font-bold mb-1">{autor.jmeno}</h3>
+          {autor.narozen && (
+            <div className="text-sm text-gray-600 mb-2">
+              {autor.narozen}
+            </div>
+          )}
+          <p className="text-gray-700 text-sm line-clamp-3">{autor.popis}</p>
+          <div className="mt-3 flex justify-between items-center">
+            {autor.aktivni ? (
+              <span className="text-sm text-green-600">Aktivní autor</span>
+            ) : (
+              <span className="text-sm text-gray-600">Neaktivní autor</span>
+            )}
+            <a href={`/spisovatel/${autor.id}`} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+              Zobrazit díla
+            </a>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
