@@ -23,7 +23,6 @@ export default function Header() {
               alt="Logo"
               className="h-10"
             />
-            <span className="text-xl font-bold text-blue-700 hidden sm:inline">eKnihy zdarma</span>
           </Link>
 
           {/* Desktop Navigation - Hidden on mobile */}
