@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Mail, Facebook, Twitter, Instagram, BookOpen, Github } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -20,7 +19,7 @@ export default function Footer() {
               vhodných pro vaše zařízení.
             </p>
             <div className="flex items-center">
-              <Heart className="h-5 w-5 text-red-500 mr-2" />
+              <span className="text-red-500 mr-2">❤️</span>
               <span className="text-gray-600">S láskou ke knihám a čtenářům</span>
             </div>
           </div>
@@ -62,7 +61,7 @@ export default function Footer() {
             <h3 className="text-lg font-bold text-blue-700 mb-4">Kontaktujte nás</h3>
             <div className="space-y-3">
               <a href="mailto:info@eknihyzdarma.cz" className="text-gray-600 hover:text-blue-700 transition-colors flex items-center">
-                <Mail className="h-5 w-5 mr-2" />
+                <span className="mr-2">✉️</span>
                 info@eknihyzdarma.cz
               </a>
               
@@ -71,15 +70,15 @@ export default function Footer() {
                 <div className="flex space-x-4">
                   <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
                      className="bg-blue-100 p-2 rounded-full hover:bg-blue-200 transition-colors">
-                    <Facebook className="h-5 w-5 text-blue-700" />
+                    <span className="text-blue-700">f</span>
                   </a>
                   <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
                      className="bg-blue-100 p-2 rounded-full hover:bg-blue-200 transition-colors">
-                    <Twitter className="h-5 w-5 text-blue-700" />
+                    <span className="text-blue-700">t</span>
                   </a>
                   <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
                      className="bg-blue-100 p-2 rounded-full hover:bg-blue-200 transition-colors">
-                    <Instagram className="h-5 w-5 text-blue-700" />
+                    <span className="text-blue-700">ig</span>
                   </a>
                 </div>
               </div>
@@ -90,7 +89,7 @@ export default function Footer() {
         {/* App Download Links - Optional */}
         <div className="border-t border-blue-200 pt-6 pb-4 flex flex-col sm:flex-row justify-between items-center">
           <div className="flex items-center mb-4 sm:mb-0">
-            <BookOpen className="h-6 w-6 text-blue-700 mr-2" />
+            <span className="text-blue-700 mr-2">📚</span>
             <span className="text-gray-700 font-medium">Dostupné na všech zařízeních</span>
           </div>
           
@@ -112,10 +111,10 @@ export default function Footer() {
           
           <div className="mt-3 sm:mt-0 flex items-center">
             <span>Vytvořeno s</span>
-            <Heart className="h-4 w-4 text-red-500 mx-1" />
+            <span className="text-red-500 mx-1">❤️</span>
             <span>v České republice</span>
             <a href="https://github.com/username/eknihy" target="_blank" rel="noopener noreferrer" className="ml-3">
-              <Github className="h-4 w-4 text-gray-600 hover:text-gray-900 transition-colors" />
+              <span className="text-gray-600 hover:text-gray-900 transition-colors">🔄</span>
             </a>
           </div>
         </div>

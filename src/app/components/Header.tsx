@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Search, Book, User, Info, Bell } from 'lucide-react';
 
 export default function Header() {
   const [search, setSearch] = useState('');
@@ -30,19 +29,15 @@ export default function Header() {
           {/* Desktop Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center space-x-6">
             <Link href="/katalog-knih" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors font-medium">
-              <Book className="h-4 w-4 mr-1" />
               <span>Katalog knih</span>
             </Link>
             <Link href="/katalog-spisovatelu" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors font-medium">
-              <User className="h-4 w-4 mr-1" />
               <span>Katalog spisovatelů</span>
             </Link>
             <Link href="/jak-cist-eknihy" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors font-medium">
-              <Info className="h-4 w-4 mr-1" />
               <span>Jak číst eKnihy</span>
             </Link>
             <Link href="/aktuality" className="flex items-center text-gray-700 hover:text-blue-600 transition-colors font-medium">
-              <Bell className="h-4 w-4 mr-1" />
               <span>Aktuality</span>
             </Link>
           </nav>
@@ -56,7 +51,7 @@ export default function Header() {
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all w-48 lg:w-64"
             />
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
           </div>
 
           {/* Mobile Search - Always visible even on mobile */}
@@ -65,7 +60,7 @@ export default function Header() {
               onClick={() => {/* Implement search functionality */}}
               className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors mr-2"
             >
-              <Search className="h-5 w-5" />
+              🔍
             </button>
           </div>
 
@@ -75,9 +70,9 @@ export default function Header() {
             className="p-2 rounded-md text-gray-600 hover:bg-gray-100 transition-colors md:hidden"
           >
             {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
+              <span className="block text-xl">✕</span>
             ) : (
-              <Menu className="h-6 w-6" />
+              <span className="block text-xl">☰</span>
             )}
           </button>
         </div>
@@ -96,7 +91,7 @@ export default function Header() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
             </div>
             
             {/* Mobile Navigation Links */}
@@ -105,28 +100,24 @@ export default function Header() {
                 className="flex items-center text-gray-700 hover:text-blue-600 py-2 transition-colors" 
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Book className="h-5 w-5 mr-3" />
                 <span className="font-medium">Katalog knih</span>
               </Link>
               <Link href="/katalog-spisovatelu" 
                 className="flex items-center text-gray-700 hover:text-blue-600 py-2 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <User className="h-5 w-5 mr-3" />
                 <span className="font-medium">Katalog spisovatelů</span>
               </Link>
               <Link href="/jak-cist-eknihy" 
                 className="flex items-center text-gray-700 hover:text-blue-600 py-2 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Info className="h-5 w-5 mr-3" />
                 <span className="font-medium">Jak číst eKnihy</span>
               </Link>
               <Link href="/aktuality" 
                 className="flex items-center text-gray-700 hover:text-blue-600 py-2 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Bell className="h-5 w-5 mr-3" />
                 <span className="font-medium">Aktuality</span>
               </Link>
             </nav>
