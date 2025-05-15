@@ -1,65 +1,80 @@
-'use client';  // Tato direktiva umožňuje použití React hooků v klientské komponentě
+'use client'
 
-
-import { ReactNode, useState } from 'react'
+import { useState, useEffect } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import clsx from 'clsx'
 
-export const metadata = {
-  title: 'eKnihy',
-  description: 'Aplikace na stahování e-knih',
-}
+// Seznam kategorií
+const categories = [
+  'Bestsellery', 'Beletrie', 'Sci-fi', 'Detektivky', 'Pro děti',
+  'Zdraví', 'Romány', 'Láska', 'Učebnice', 'Umění',
+  'Osobní rozvoj', 'Naučné', 'Klasika'
+]
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  const [search, setSearch] = useState('')
+export default function CategoryNav() {
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   return (
-    <html lang="cs">
-      <body className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
-        
-        {/* Header */}
-        <header className="bg-white shadow p-4">
-          <div className="max-w-6xl mx-auto flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <img
-                src="https://www.eknihyzdarma.cz/imgs/logo.png"
-                alt="Logo"
-                className="h-10"
-              />
-              <span className="text-xl font-bold hidden sm:inline">eKnihy zdarma</span>
-            </Link>
+    <nav className="bg-white shadow-sm sticky top-0 z-10 overflow-x-auto hide-scrollbar py-3">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+        {isClient ? <CategoryButtonsClient /> : <CategoryButtonsFallback />}
+      </div>
+    </nav>
+  )
+}
 
-            {/* Navigation Links */}
-            <nav className="space-x-4">
-              <Link href="/katalog-knih" className="text-sm">Katalog knih</Link>
-              <Link href="/katalog-spisovatelu" className="text-sm">Katalog spisovatelů</Link>
-              <Link href="/jak-cist-eknihy" className="text-sm">Jak číst eKnihy</Link>
-              <Link href="/aktuality" className="text-sm">Aktuality</Link>
-            </nav>
+function CategoryButtonsClient() {
+  const pathname = usePathname()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const currentCategory = searchParams.get('category')
 
-            {/* Search Box */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Hledat knihy..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 pr-4 py-2 rounded-md border border-gray-300"
-              />
-              <span className="absolute left-3 top-2 text-gray-500">🔍</span>
-            </div>
-          </div>
-        </header>
+  const handleClick = (category: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (category === currentCategory) {
+      params.delete('category')
+    } else {
+      params.set('category', category)
+    }
+    router.push(`${pathname}?${params.toString()}`)
+  }
 
-        {/* Main Content */}
-        <main className="flex-1 max-w-6xl mx-auto p-4">
-          {children}
-        </main>
+  return (
+    <div className="flex gap-3 overflow-x-auto hide-scrollbar">
+      {categories.map((category) => (
+        <button
+          key={category}
+          onClick={() => handleClick(category)}
+          className={clsx(
+            'whitespace-nowrap px-4 py-2 rounded-full text-sm border transition-colors',
+            currentCategory === category
+              ? 'bg-blue-600 text-white border-blue-600'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+          )}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+  )
+}
 
-        {/* Footer */}
-        <footer className="bg-white shadow-inner p-4 text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} eKnihy zdarma. Všechna práva vyhrazena.
-        </footer>
-      </body>
-    </html>
+function CategoryButtonsFallback() {
+  return (
+    <div className="flex gap-3 overflow-x-auto hide-scrollbar">
+      {categories.map((category) => (
+        <span
+          key={category}
+          className="whitespace-nowrap px-4 py-2 rounded-full text-sm border bg-gray-200 text-gray-500"
+        >
+          {category}
+        </span>
+      ))}
+    </div>
   )
 }
