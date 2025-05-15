@@ -1,6 +1,6 @@
 'use client';  // Tato direktiva umožňuje použití React hooků v klientské komponentě
 
-import './globals.css'
+
 import { ReactNode, useState } from 'react'
 import Link from 'next/link'
 
