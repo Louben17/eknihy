@@ -1,16 +1,10 @@
 // src/app/page.tsx
 import { supabase, Kniha } from '@/lib/supabase'
 
-// V Next.js 13+ musíme použít správnou definici typů pro Props server komponenty
-// Problém byl v definici typů - searchParams musí odpovídat Next.js typům
+// Pro Next.js 13+ App Router nemusíme definovat vlastní typy pro props
+// Místo toho budeme používat standardní signaturu funkce bez explicitních typů
 
-// Správná definice typů kompatibilní s Next.js typovým systémem
-type PageProps = {
-  params: Record<string, string>;
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
-// Funkce pro načtení dat - oddělená od komponenty
+// Funkce pro načtení dat
 async function fetchKnihy(category: string | null) {
   try {
     // Základní dotaz
@@ -18,23 +12,22 @@ async function fetchKnihy(category: string | null) {
       .from('knihy')
       .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME')
       
-    // Přidáváme řazení pouze pokud tabulka obsahuje created_at sloupec
+    // Opatrně zkoušíme přidat řazení
     try {
+      // Nejprve ověříme existenci sloupce created_at
       const { data: checkData, error: checkError } = await supabase
         .from('knihy')
         .select('created_at')
         .limit(1)
       
-      // Pokud první dotaz projde (sloupec existuje), použijeme řazení
       if (!checkError && checkData) {
         query = query.order('created_at', { ascending: false })
       }
     } catch (orderError) {
-      // Pokud existuje problém s řazením, ignorujeme ho a pokračujeme bez řazení
       console.warn("Varování: Nelze řadit podle created_at, pokračuji bez řazení")
     }
 
-    // Filtrování podle kategorie, pokud je zadána
+    // Filtrování podle kategorie
     if (category) {
       query = query.eq('CATEGORY_NAME', category)
     }
@@ -42,28 +35,31 @@ async function fetchKnihy(category: string | null) {
     // Provedení dotazu
     const { data, error } = await query
 
-    // Zpracování případné chyby
     if (error) {
       console.error("Supabase chyba:", error)
       throw new Error(`Chyba při načítání knih: ${error.message}`)
     }
 
-    // Pokud nejsou žádná data, vrátíme prázdné pole místo null
     return data || []
   } catch (err) {
     console.error("Chyba při fetchování knih:", err)
-    // Přeposíláme chybu pro zpracování v hlavní komponentě
     throw err
   }
 }
 
-// Server Component s opravenou definicí typů
-export default async function Page({ searchParams }: PageProps) {
+// Server Component - použití Next.js standardní signatury bez vlastních typů
+export default async function Page({ 
+  params,
+  searchParams,
+}: {
+  params: {};
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   try {
-    // Bezpečné získání kategorie - nyní používáme správný typ podle Next.js
+    // Bezpečné získání kategorie
     const category = typeof searchParams.category === 'string' ? searchParams.category : null;
     
-    // Načtení dat (oddělená funkce)
+    // Načtení dat
     const knihy = await fetchKnihy(category);
 
     // Render UI
@@ -117,13 +113,12 @@ export default async function Page({ searchParams }: PageProps) {
   } catch (err) {
     console.error("Neočekávaná chyba v Page komponentě:", err)
     
-    // Detailnější zpráva o chybě pro lepší debugging
+    // Detailnější zpráva o chybě
     let errorMessage = "Neznámá chyba";
     if (err instanceof Error) {
       errorMessage = err.message;
     }
     
-    // Zobrazení uživatelsky přívětivé chybové hlášky
     return (
       <div className="text-center py-16">
         <h2 className="text-xl text-red-500 mb-4">Došlo k neočekávané chybě</h2>

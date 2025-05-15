@@ -12,7 +12,7 @@ const categories = [
   'Detektivky',
   'Pro děti',
   'Zdraví',
-  'Romány',
+  'Romány', 
   'Láska',
   'Učebnice',
   'Umění',
@@ -23,11 +23,11 @@ const categories = [
 
 // Hlavní komponenta navigace
 export default function CategoryNav() {
-  // Použití React hooks pro účely detekce hydratace
+  // Použití React hooks pro detekci hydratace
   const [isClient, setIsClient] = useState(false)
   
+  // Bezpečná detekce klientského prostředí
   useEffect(() => {
-    // Potvrzuje, že kód běží na klientovi
     setIsClient(true)
   }, [])
 
@@ -45,17 +45,19 @@ export default function CategoryNav() {
   )
 }
 
-// Přejmenovaná komponenta pro větší přehlednost
+// Komponenta s tlačítky kategorií
 function CategoryButtonsClient() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   
-  // Bezpečné získání category parametru
-  const currentCategory = searchParams.get('category') || ''
+  // Bezpečnější získání parametru
+  const currentCategory = searchParams ? searchParams.get('category') || '' : ''
   
   const handleCategoryClick = (category: string) => {
     try {
+      if (!searchParams) return;
+      
       // Vytvoření nových parametrů na základě aktuálních
       const params = new URLSearchParams(searchParams.toString())
       
@@ -66,8 +68,10 @@ function CategoryButtonsClient() {
         params.set('category', category)
       }
       
-      // Navigace na aktualizovanou URL
-      router.push(`${pathname}?${params.toString()}`)
+      // Bezpečná navigace
+      if (pathname) {
+        router.push(`${pathname}?${params.toString()}`)
+      }
     } catch (err) {
       console.error("Chyba při změně kategorie:", err)
       // V případě chyby přesměrování na hlavní stránku
