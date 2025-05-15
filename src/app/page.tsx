@@ -8,14 +8,16 @@ type Kniha = {
   CATEGORY_NAME?: string
 }
 
-// Toto je server komponenta, nepotřebuje useSearchParams()
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined }
+// Použití nativních typů Next.js
+export default async function HomePage({ 
+  params, 
+  searchParams 
+}: { 
+  params: Record<string, string>,
+  searchParams: Record<string, string | string[] | undefined>
 }) {
-  // Přímý přístup k searchParams jako k parametru funkce
-  const category = typeof searchParams?.category === 'string' ? searchParams.category : null
+  // Získání kategorie z URL parametrů
+  const category = typeof searchParams.category === 'string' ? searchParams.category : null
 
   // Upravený dotaz s filtrováním podle kategorie
   let query = supabase
