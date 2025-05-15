@@ -8,24 +8,17 @@ type Kniha = {
   CATEGORY_NAME?: string
 }
 
-// Použití nativních typů Next.js
-export default async function HomePage({ 
-  params, 
-  searchParams 
-}: { 
-  params: Record<string, string>,
-  searchParams: Record<string, string | string[] | undefined>
-}) {
-  // Získání kategorie z URL parametrů
-  const category = typeof searchParams.category === 'string' ? searchParams.category : null
+export default async function Page(props) {
+  // Základní přístup bez typování
+  const category = props.searchParams?.category || null
 
-  // Upravený dotaz s filtrováním podle kategorie
+  // Získání knih z Supabase
   let query = supabase
     .from('knihy')
     .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME')
     .order('created_at', { ascending: false })
 
-  // Pokud je vybrána kategorie, přidáme filtr
+  // Filtrování podle kategorie
   if (category) {
     query = query.eq('CATEGORY_NAME', category)
   }
@@ -41,6 +34,7 @@ export default async function HomePage({
       <h1 className="text-2xl font-semibold mb-4">
         {category ? `📚 Knihy: ${category}` : '📚 Všechny knihy'}
       </h1>
+      
       {knihy && knihy.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {knihy.map((kniha) => (
