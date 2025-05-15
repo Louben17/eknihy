@@ -1,30 +1,76 @@
 'use client'
 
-import { Suspense } from 'react'
+import { useState, useEffect } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-// Komponenta, která používá useSearchParams
-function CategoryButtons() {
+// Definice kategorií
+const categories = [
+  'Bestsellery',
+  'Beletrie',
+  'Sci-fi',
+  'Detektivky',
+  'Pro děti',
+  'Zdraví',
+  'Romány',
+  'Láska',
+  'Učebnice',
+  'Umění',
+  'Osobní rozvoj',
+  'Naučné',
+  'Klasika'
+]
+
+// Hlavní komponenta navigace
+export default function CategoryNav() {
+  // Použití React hooks pro účely detekce hydratace
+  const [isClient, setIsClient] = useState(false)
+  
+  useEffect(() => {
+    // Potvrzuje, že kód běží na klientovi
+    setIsClient(true)
+  }, [])
+
+  return (
+    <nav className="bg-white shadow-sm sticky top-0 z-10 overflow-x-auto py-3">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+        {/* Podmíněný rendering - nejdřív fallback, pak skutečná komponenta */}
+        {!isClient ? (
+          <CategoryButtonsFallback />
+        ) : (
+          <CategoryButtonsClient />
+        )}
+      </div>
+    </nav>
+  )
+}
+
+// Přejmenovaná komponenta pro větší přehlednost
+function CategoryButtonsClient() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   
   // Bezpečné získání category parametru
-  const currentCategory = searchParams ? searchParams.get('category') || '' : ''
+  const currentCategory = searchParams.get('category') || ''
   
   const handleCategoryClick = (category: string) => {
     try {
-      const params = new URLSearchParams(searchParams?.toString() || '')
+      // Vytvoření nových parametrů na základě aktuálních
+      const params = new URLSearchParams(searchParams.toString())
+      
+      // Toggle kategorie (kliknutí na aktuální kategorii ji odstraní)
       if (category === currentCategory) {
         params.delete('category')
       } else {
         params.set('category', category)
       }
+      
+      // Navigace na aktualizovanou URL
       router.push(`${pathname}?${params.toString()}`)
     } catch (err) {
       console.error("Chyba při změně kategorie:", err)
-      // Fallback pro případ chyby - přesměrování na hlavní stránku
+      // V případě chyby přesměrování na hlavní stránku
       router.push('/')
     }
   }
@@ -59,7 +105,7 @@ function CategoryButtons() {
   )
 }
 
-// Fallback pro suspense
+// Fallback pro načítání
 function CategoryButtonsFallback() {
   return (
     <div className="flex space-x-4 pb-1 overflow-x-auto">
@@ -68,34 +114,5 @@ function CategoryButtonsFallback() {
       <div className="h-9 bg-gray-100 rounded-lg animate-pulse w-24 border border-gray-200"></div>
       <div className="h-9 bg-gray-100 rounded-lg animate-pulse w-20 border border-gray-200"></div>
     </div>
-  )
-}
-
-const categories = [
-  'Bestsellery',
-  'Beletrie',
-  'Sci-fi',
-  'Detektivky',
-  'Pro děti',
-  'Zdraví',
-  'Romány',
-  'Láska',
-  'Učebnice',
-  'Umění',
-  'Osobní rozvoj',
-  'Naučné',
-  'Klasika'
-]
-
-// Hlavní komponenta, která obaluje CategoryButtons do Suspense
-export default function CategoryNav() {
-  return (
-    <nav className="bg-white shadow-sm sticky top-0 z-10 overflow-x-auto py-3">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4">
-        <Suspense fallback={<CategoryButtonsFallback />}>
-          <CategoryButtons />
-        </Suspense>
-      </div>
-    </nav>
   )
 }

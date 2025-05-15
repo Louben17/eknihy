@@ -1,39 +1,50 @@
-import { supabase } from '@/lib/supabase'
+// src/app/page.tsx
+import { supabase, Kniha } from '@/lib/supabase'
 
-// Definice typu pro knihu
-type Kniha = {
-  id: number
-  ID: string
-  IMGURL: string
-  PRODUCT: string
-  CATEGORY_NAME?: string
+// Definice typů pro props
+type SearchParams = {
+  category?: string
 }
 
-// Nejjednodušší řešení - použít any pro typy
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function Page(props: any) {
+type PageProps = {
+  searchParams?: SearchParams
+}
+
+// Funkce pro načtení dat - oddělená od komponenty
+async function fetchKnihy(category: string | null) {
+  // Základní dotaz
+  let query = supabase
+    .from('knihy')
+    .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME')
+    .order('created_at', { ascending: false })
+
+  // Filtrování podle kategorie, pokud je zadána
+  if (category) {
+    query = query.eq('CATEGORY_NAME', category)
+  }
+
+  // Provedení dotazu
+  const { data, error } = await query
+
+  // Zpracování případné chyby
+  if (error) {
+    console.error("Supabase chyba:", error)
+    throw error
+  }
+
+  return data
+}
+
+// Server Component
+export default async function Page({ searchParams }: PageProps) {
   try {
-    // Bezpečné získání query parametrů s ošetřením chyb
-    const category = props?.searchParams?.category || null;
+    // Bezpečné získání kategorie
+    const category = searchParams?.category || null;
+    
+    // Načtení dat (oddělená funkce)
+    const knihy = await fetchKnihy(category);
 
-    // Získání knih z Supabase
-    let query = supabase
-      .from('knihy')
-      .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME')
-      .order('created_at', { ascending: false })
-
-    // Filtrování podle kategorie
-    if (category) {
-      query = query.eq('CATEGORY_NAME', category)
-    }
-
-    const { data: knihy, error } = await query
-
-    if (error) {
-      console.error("Supabase chyba:", error)
-      return <p className="text-center py-8 text-red-500">Chyba při načítání knih: {error.message}</p>
-    }
-
+    // Render UI
     return (
       <div>
         <h1 className="text-2xl font-semibold mb-6 text-gray-800 border-b pb-3">
@@ -42,7 +53,7 @@ export default async function Page(props: any) {
         
         {knihy && knihy.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {knihy.map((kniha) => (
+            {knihy.map((kniha: Kniha) => (
               <div
                 key={kniha.id}
                 className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-[#2998cb]"
