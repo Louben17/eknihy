@@ -2,26 +2,46 @@
 
 import { Suspense } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 // Komponenta, která používá useSearchParams
 function CategoryButtons() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const currentCategory = searchParams.get('category') || ''
+  
+  // Bezpečné získání category parametru
+  const currentCategory = searchParams ? searchParams.get('category') || '' : ''
   
   const handleCategoryClick = (category: string) => {
-    const params = new URLSearchParams(searchParams)
-    if (category === currentCategory) {
-      params.delete('category')
-    } else {
-      params.set('category', category)
+    try {
+      const params = new URLSearchParams(searchParams?.toString() || '')
+      if (category === currentCategory) {
+        params.delete('category')
+      } else {
+        params.set('category', category)
+      }
+      router.push(`${pathname}?${params.toString()}`)
+    } catch (err) {
+      console.error("Chyba při změně kategorie:", err)
+      // Fallback pro případ chyby - přesměrování na hlavní stránku
+      router.push('/')
     }
-    router.push(`${pathname}?${params.toString()}`)
   }
 
   return (
-    <div className="flex space-x-4 pb-1">
+    <div className="flex space-x-4 pb-1 overflow-x-auto">
+      <Link 
+        href="/"
+        className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+          ${!currentCategory 
+            ? 'bg-[#2998cb] text-white shadow-md' 
+            : 'bg-white text-gray-700 hover:bg-[#2998cb] hover:text-white hover:shadow-md border border-gray-200'
+          }`}
+      >
+        Všechny
+      </Link>
+      
       {categories.map(category => (
         <button
           key={category}
@@ -42,7 +62,7 @@ function CategoryButtons() {
 // Fallback pro suspense
 function CategoryButtonsFallback() {
   return (
-    <div className="flex space-x-4 pb-1">
+    <div className="flex space-x-4 pb-1 overflow-x-auto">
       <div className="h-9 bg-gray-100 rounded-lg animate-pulse w-24 border border-gray-200"></div>
       <div className="h-9 bg-gray-100 rounded-lg animate-pulse w-20 border border-gray-200"></div>
       <div className="h-9 bg-gray-100 rounded-lg animate-pulse w-24 border border-gray-200"></div>
