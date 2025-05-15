@@ -9,16 +9,13 @@ type Kniha = {
   CATEGORY_NAME?: string
 }
 
-// Definice typu pro props
-type PageProps = {
-  params: { slug?: string }
-  searchParams?: { 
-    category?: string 
-    [key: string]: string | string[] | undefined
-  }
-}
-
-export default async function Page({ searchParams }: PageProps) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: {}
+  searchParams?: { category?: string; [key: string]: string | string[] | undefined }
+}) {
   // Použití typovaných props
   const category = searchParams?.category || null
 
