@@ -1,59 +1,69 @@
-'use client'
+import { supabase } from '@/lib/supabase'
 
-import { useState } from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+type Kniha = {
+  id: number
+  ID: string
+  IMGURL: string
+  PRODUCT: string
+  CATEGORY_NAME?: string
+}
 
-const categories = [
-  'Bestsellery',
-  'Beletrie',
-  'Sci-fi',
-  'Detektivky',
-  'Pro děti',
-  'Zdraví',
-  'Romány',
-  'Láska',
-  'Učebnice',
-  'Umění',
-  'Osobní rozvoj',
-  'Naučné',
-  'Klasika'
-]
+// Toto je server komponenta, nepotřebuje useSearchParams()
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined }
+}) {
+  // Přímý přístup k searchParams jako k parametru funkce
+  const category = typeof searchParams?.category === 'string' ? searchParams.category : null
 
-export default function CategoryNav() {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const currentCategory = searchParams.get('category') || ''
-  
-  const handleCategoryClick = (category: string) => {
-    const params = new URLSearchParams(searchParams)
-    if (category === currentCategory) {
-      params.delete('category')
-    } else {
-      params.set('category', category)
-    }
-    router.push(`${pathname}?${params.toString()}`)
+  // Upravený dotaz s filtrováním podle kategorie
+  let query = supabase
+    .from('knihy')
+    .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME')
+    .order('created_at', { ascending: false })
+
+  // Pokud je vybrána kategorie, přidáme filtr
+  if (category) {
+    query = query.eq('CATEGORY_NAME', category)
+  }
+
+  const { data: knihy, error } = await query
+
+  if (error) {
+    return <p>Chyba při načítání knih: {error.message}</p>
   }
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-10 overflow-x-auto py-2">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4">
-        <div className="flex space-x-2 pb-1">
-          {categories.map(category => (
-            <button
-              key={category}
-              onClick={() => handleCategoryClick(category)}
-              className={`whitespace-nowrap px-3 py-2 rounded-md text-sm font-medium transition-colors
-                ${currentCategory === category
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                }`}
+    <div>
+      <h1 className="text-2xl font-semibold mb-4">
+        {category ? `📚 Knihy: ${category}` : '📚 Všechny knihy'}
+      </h1>
+      {knihy && knihy.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {knihy.map((kniha) => (
+            <div
+              key={kniha.id}
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition"
             >
-              {category}
-            </button>
+              <img
+                src={kniha.IMGURL}
+                alt={kniha.ID}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-2 font-medium text-center">{kniha.ID}</div>
+              <div className="p-2 font-medium text-center">{kniha.PRODUCT}</div>
+              {kniha.CATEGORY_NAME && (
+                <div className="p-1 bg-gray-100 text-xs text-center">
+                  {kniha.CATEGORY_NAME}
+                </div>
+              )}
+            </div>
           ))}
         </div>
-      </div>
-    </nav>
+      ) : (
+        <p className="text-center py-8">V této kategorii nejsou žádné knihy</p>
+      )}
+    </div>
   )
 }
