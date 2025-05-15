@@ -1,25 +1,33 @@
+'use client'
+import { useEffect, useState } from 'react'
 import { supabase, Kniha } from '@/lib/supabase'
-import { redirect } from 'next/navigation'
 
-export default async function Page() {
-  // Na hlavní stránce není možné získat searchParams server-side z URL.
-  // Pokud chceš filtrovat podle kategorie, udělej to v client komponentě.
-  
-  // Dočasně načti všechny knihy bez filtrování
-  const { data: knihy, error } = await supabase
-    .from('knihy')
-    .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME')
-    .order('created_at', { ascending: false })
+export default function Page() {
+  const [knihy, setKnihy] = useState<Kniha[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  if (error) {
-    console.error("Chyba při načítání knih:", error)
-    return (
-      <div className="text-center py-16">
-        <h2 className="text-xl text-red-500 mb-4">Došlo k chybě</h2>
-        <p className="text-gray-600">{error.message}</p>
-      </div>
-    )
-  }
+  useEffect(() => {
+    async function fetchData() {
+      const { data, error } = await supabase
+        .from('knihy')
+        .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        setError(error.message)
+      } else {
+        setKnihy(data || [])
+      }
+
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
+  if (loading) return <p className="py-16 text-center text-gray-500">Načítání knih...</p>
+  if (error) return <p className="py-16 text-center text-red-500">Chyba: {error}</p>
 
   return (
     <div>
@@ -27,9 +35,9 @@ export default async function Page() {
         📚 Všechny knihy
       </h1>
 
-      {knihy && knihy.length > 0 ? (
+      {knihy.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {knihy.map((kniha: Kniha) => (
+          {knihy.map((kniha) => (
             <div
               key={kniha.id}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-[#2998cb]"
