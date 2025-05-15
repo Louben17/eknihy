@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 
+// Definice typu pro knihu
 type Kniha = {
   id: number
   ID: string
@@ -8,9 +9,18 @@ type Kniha = {
   CATEGORY_NAME?: string
 }
 
-export default async function Page(props) {
-  // Základní přístup bez typování
-  const category = props.searchParams?.category || null
+// Definice typu pro props
+type PageProps = {
+  params: { slug?: string }
+  searchParams?: { 
+    category?: string 
+    [key: string]: string | string[] | undefined
+  }
+}
+
+export default async function Page({ searchParams }: PageProps) {
+  // Použití typovaných props
+  const category = searchParams?.category || null
 
   // Získání knih z Supabase
   let query = supabase
