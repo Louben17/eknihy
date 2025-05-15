@@ -9,15 +9,11 @@ type Kniha = {
   CATEGORY_NAME?: string
 }
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: {}
-  searchParams?: { category?: string; [key: string]: string | string[] | undefined }
-}) {
-  // Použití typovaných props
-  const category = searchParams?.category || null
+// Nejjednodušší řešení - použít any pro typy
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function Page(props: any) {
+  // Získání query parametrů
+  const category = props.searchParams?.category || null;
 
   // Získání knih z Supabase
   let query = supabase
