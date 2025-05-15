@@ -1,9 +1,8 @@
-// Odstraněna "use client" direktiva z tohoto souboru
-
 import './globals.css'
 import { ReactNode } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import CategoryNav from './components/CategoryNav'
 
 export const metadata = {
   title: 'eKnihy',
@@ -14,15 +13,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="cs">
       <body className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
-        {/* Header komponenta je nyní samostatná */}
+        {/* Header komponenta */}
         <Header />
+        
+        {/* Pás kategorií knih */}
+        <CategoryNav />
         
         {/* Main Content */}
         <main className="flex-1 max-w-6xl mx-auto p-4">
           {children}
         </main>
 
-        {/* Footer komponenta je nyní samostatná */}
+        {/* Footer komponenta */}
         <Footer />
       </body>
     </html>
