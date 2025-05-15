@@ -1,31 +1,29 @@
+// src/app/layout.tsx
 import './globals.css'
 import { ReactNode } from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
 import CategoryNav from './components/CategoryNav'
 
 export const metadata = {
   title: 'eKnihy',
-  description: 'Aplikace na stahování e-knih',
+  description: 'Online knihovna pro každého',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="cs">
-      <body className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
-        {/* Header komponenta */}
-        <Header />
-        
-        {/* Pás kategorií knih - již má interní Suspense */}
+      <body className="flex flex-col min-h-screen bg-white text-gray-900">
+        {/* Pás karet s kategoriemi */}
         <CategoryNav />
-        
-        {/* Main Content */}
-        <main className="flex-1 max-w-6xl mx-auto p-4">
+
+        {/* Hlavní obsah stránky */}
+        <main className="flex-1 max-w-6xl mx-auto px-4 py-6">
           {children}
         </main>
-
-        {/* Footer komponenta */}
-        <Footer />
+        
+        {/* Footer (volitelně) */}
+        <footer className="bg-gray-100 text-center text-sm py-4 mt-auto">
+          © {new Date().getFullYear()} eKnihy.cz — Všechna práva vyhrazena.
+        </footer>
       </body>
     </html>
   )
