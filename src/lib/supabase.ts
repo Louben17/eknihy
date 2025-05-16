@@ -1,4 +1,4 @@
-// src/lib/supabase.ts
+// Vytvoř tento soubor ve src/lib/supabase.ts pokud neexistuje
 import { createClient } from '@supabase/supabase-js'
 
 // Bezpečnější způsob přístupu k proměnným prostředí
@@ -7,7 +7,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 // Kontrola, zda proměnné prostředí jsou nastaveny
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('KRITICKÁ CHYBA: Chybí Supabase proměnné prostředí. Zkontrolujte nastavení na Netlify.')
+  console.error('KRITICKÁ CHYBA: Chybí Supabase proměnné prostředí. Zkontrolujte nastavení.')
 }
 
 // Vytvoření klienta s ošetřením potenciálně chybějících proměnných

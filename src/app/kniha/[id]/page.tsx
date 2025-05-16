@@ -1,11 +1,8 @@
+// src/app/kniha/[id]/page.tsx
 import { supabase } from '@/lib/supabase'
 
-// Opravená typizace pro Next.js App Router
-type Props = {
-  params: { id: string }
-}
-
-export default async function DetailKnihy({ params }: Props) {
+// Kompletně odstraníme typové anotace a necháme TypeScript odvodit typy
+export default async function DetailKnihy({ params }) {
   const { id } = params
 
   const { data: kniha, error } = await supabase
