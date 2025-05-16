@@ -1,37 +1,24 @@
-// Vytvoř tento soubor ve src/lib/supabase.ts pokud neexistuje
 import { createClient } from '@supabase/supabase-js'
 
-// Bezpečnější způsob přístupu k proměnným prostředí
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+// Výchozí hodnoty - POUZE PRO DEVELOPMENT
+const isProduction = process.env.VERCEL_ENV === 'production'
+const DEFAULT_SUPABASE_URL = 'https://vas-projekt.supabase.co'
+const DEFAULT_SUPABASE_ANON_KEY = 'vas-anonymni-klic'
 
-// Kontrola, zda proměnné prostředí jsou nastaveny
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('KRITICKÁ CHYBA: Chybí Supabase proměnné prostředí. Zkontrolujte nastavení.')
+// V produkci vždy vyžadujeme proměnné prostředí
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || (!isProduction ? DEFAULT_SUPABASE_URL : null)
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || (!isProduction ? DEFAULT_SUPABASE_ANON_KEY : null)
+
+// Kontrola pouze pro produkční prostředí
+if (isProduction && (!supabaseUrl || !supabaseAnonKey)) {
+  throw new Error('V produkci jsou vyžadovány Supabase proměnné prostředí')
 }
 
-// Vytvoření klienta s ošetřením potenciálně chybějících proměnných
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: false // Pro server components není potřeba ukládat session
-  },
-  // Přidáváme globální nastavení pro timeout - zabrání dlouhým čekáním
-  global: {
-    fetch: (...args) => {
-      const [resource, config] = args
-      const customConfig = { ...config }
-      // Nastavíme timeout na 10 sekund aby se aplikace nezasekla
-      const timeout = 10000
-      
-      return Promise.race([
-        fetch(resource, customConfig),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Časový limit pro Supabase vypršel')), timeout)
-        )
-      ]) as Promise<Response>
-    }
-  }
-})
+// Vytvoření klienta s ošetřením případného null
+export const supabase = createClient(
+  supabaseUrl || DEFAULT_SUPABASE_URL, 
+  supabaseAnonKey || DEFAULT_SUPABASE_ANON_KEY
+)
 
 // Definice typu pro knihu
 export type Kniha = {
@@ -40,6 +27,6 @@ export type Kniha = {
   IMGURL: string
   PRODUCT: string
   CATEGORY_NAME?: string
-  created_at?: string // Přidáno jako volitelné
+  created_at?: string
   slug: string
 }
