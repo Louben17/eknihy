@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
 import clsx from 'clsx'
 
-// Seznam kategorií
 const categories = [
   'Bestsellery', 'Beletrie', 'Sci-fi', 'Detektivky', 'Pro děti',
   'Zdraví', 'Romány', 'Láska', 'Učebnice', 'Umění',
@@ -20,8 +18,8 @@ export default function CategoryNav() {
   }, [])
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-10 overflow-x-auto hide-scrollbar py-3">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+    <nav className="bg-white py-4">
+      <div className="max-w-6xl mx-auto px-4">
         {isClient ? <CategoryButtonsClient /> : <CategoryButtonsFallback />}
       </div>
     </nav>
@@ -45,7 +43,7 @@ function CategoryButtonsClient() {
   }
 
   return (
-    <div className="flex gap-3 overflow-x-auto hide-scrollbar">
+    <div className="flex flex-wrap gap-3 sm:flex-nowrap sm:overflow-x-auto sm:-mx-4 sm:px-4 sm:hide-scrollbar">
       {categories.map((category) => (
         <button
           key={category}
@@ -66,7 +64,7 @@ function CategoryButtonsClient() {
 
 function CategoryButtonsFallback() {
   return (
-    <div className="flex gap-3 overflow-x-auto hide-scrollbar">
+    <div className="flex flex-wrap gap-3 sm:flex-nowrap sm:overflow-x-auto sm:-mx-4 sm:px-4 sm:hide-scrollbar">
       {categories.map((category) => (
         <span
           key={category}
