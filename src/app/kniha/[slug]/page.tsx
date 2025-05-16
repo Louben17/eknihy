@@ -1,14 +1,13 @@
 // src/app/kniha/[slug]/page.tsx
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
+import { Params } from 'next/dist/shared/lib/router/utils/route-matcher'
 
-type Props = {
-  params: {
-    slug: string
-  }
-}
-
-export default async function DetailKnihy({ params }: Props) {
+export default async function DetailKnihy({
+  params,
+}: {
+  params: { slug: string }
+}) {
   const { slug } = params
 
   const { data: kniha, error } = await supabase
@@ -37,4 +36,15 @@ export default async function DetailKnihy({ params }: Props) {
       </div>
     </div>
   )
+}
+
+// Define the generateStaticParams function if you're using static generation
+export async function generateStaticParams() {
+  const { data: knihy } = await supabase
+    .from('knihy')
+    .select('slug')
+  
+  return knihy?.map(kniha => ({
+    slug: kniha.slug,
+  })) || []
 }
