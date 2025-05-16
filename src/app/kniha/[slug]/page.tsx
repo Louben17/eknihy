@@ -1,6 +1,14 @@
+// src/app/kniha/[slug]/page.tsx
 import { supabase } from '@/lib/supabase'
+import { notFound } from 'next/navigation'
 
-export default async function DetailKnihy({ params }: { params: { slug: string } }) {
+type Props = {
+  params: {
+    slug: string
+  }
+}
+
+export default async function DetailKnihy({ params }: Props) {
   const { slug } = params
 
   const { data: kniha, error } = await supabase
@@ -10,12 +18,7 @@ export default async function DetailKnihy({ params }: { params: { slug: string }
     .single()
 
   if (error || !kniha) {
-    return (
-      <div className="text-red-500 p-6">
-        <h1>Chyba při načítání knihy</h1>
-        <p>{error?.message || 'Kniha nenalezena'}</p>
-      </div>
-    )
+    notFound()
   }
 
   return (
