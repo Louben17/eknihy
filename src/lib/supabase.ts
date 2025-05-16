@@ -41,4 +41,5 @@ export type Kniha = {
   PRODUCT: string
   CATEGORY_NAME?: string
   created_at?: string // Přidáno jako volitelné
+  slug: string
 }
