@@ -12,7 +12,7 @@ export default function Page() {
     async function fetchData() {
       const { data, error } = await supabase
         .from('knihy')
-        .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME')
+        .select('id, ID, PRODUCT, IMGURL, CATEGORY_NAME, slug') // přidáno "slug"
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -39,7 +39,7 @@ export default function Page() {
       {knihy.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {knihy.map((kniha) => (
-            <Link href={`/kniha/${kniha.id}`} key={kniha.id}>
+            <Link href={`/kniha/${kniha.slug}`} key={kniha.id}>
               <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-[#2998cb] cursor-pointer">
                 <div className="h-48 overflow-hidden">
                   <img
