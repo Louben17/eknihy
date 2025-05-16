@@ -1,13 +1,18 @@
 // src/app/kniha/[slug]/page.tsx
-import { supabase, Kniha } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 
-interface PageParams {
-  slug: string
-}
-
-// Explicitní typování pro Next.js App Router
-export default async function DetailKnihy({ params }: { params: PageParams }) {
+/**
+ * Toto by mělo fungovat pro Next.js 15.x, kde je potřeba
+ * explicitně označit parametry pro stránky s dynamickými segmenty.
+ */
+export default async function DetailKnihy({
+  params,
+  searchParams,
+}: {
+  params: { slug: string }
+  searchParams?: { [key: string]: string | string[] | undefined }
+}) {
   const { slug } = params
 
   try {
@@ -47,13 +52,17 @@ export default async function DetailKnihy({ params }: { params: PageParams }) {
   }
 }
 
-// Funkce pro generování statických parametrů
+/**
+ * Generování statických parametrů pro Next.js 15
+ * V této verzi musí být struktura správně formátovaná
+ */
 export async function generateStaticParams() {
   const { data } = await supabase
     .from('knihy')
     .select('slug')
   
+  // Správný formát pro Next.js 15
   return (data || []).map((kniha) => ({
-    params: { slug: kniha.slug },
+    slug: kniha.slug,
   }))
 }
