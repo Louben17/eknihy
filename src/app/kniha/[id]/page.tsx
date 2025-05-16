@@ -1,14 +1,11 @@
 import { supabase } from '@/lib/supabase'
-import Image from 'next/image'
 
-// ⬅️ Opravená typizace
-interface PageProps {
-  params: {
-    id: string
-  }
+// Opravená typizace pro Next.js App Router
+type Props = {
+  params: { id: string }
 }
 
-export default async function DetailKnihy({ params }: PageProps) {
+export default async function DetailKnihy({ params }: Props) {
   const { id } = params
 
   const { data: kniha, error } = await supabase
