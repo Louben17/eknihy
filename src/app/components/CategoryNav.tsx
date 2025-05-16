@@ -64,7 +64,7 @@ function CategoryButtonsClient() {
 
 function CategoryButtonsFallback() {
   return (
-    <div className="flex overflow-x-auto whitespace-nowrap gap-1 sm:gap-2 hide-scrollbar">
+    <div className="flex overflow-x-auto whitespace-nowrap gap-1 sm:gap-2 hide-scrollbar touch-auto pb-2">
       {categories.map((category) => (
         <span
           key={category}
