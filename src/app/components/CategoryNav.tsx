@@ -18,8 +18,8 @@ export default function CategoryNav() {
   }, [])
 
   return (
-    <nav className="bg-white py-4">
-      <div className="max-w-6xl mx-auto px-4">
+    <nav className="bg-white py-3">
+      <div className="max-w-7xl mx-auto px-4">
         {isClient ? <CategoryButtonsClient /> : <CategoryButtonsFallback />}
       </div>
     </nav>
@@ -43,13 +43,13 @@ function CategoryButtonsClient() {
   }
 
   return (
-    <div className="flex flex-wrap gap-3 sm:flex-nowrap sm:overflow-x-auto sm:-mx-4 sm:px-4 sm:hide-scrollbar">
+    <div className="flex overflow-x-auto whitespace-nowrap gap-1 sm:gap-2 hide-scrollbar">
       {categories.map((category) => (
         <button
           key={category}
           onClick={() => handleClick(category)}
           className={clsx(
-            'whitespace-nowrap px-4 py-2 rounded-full text-sm border transition-colors',
+            'px-3 py-1 text-xs sm:text-sm rounded-full border flex-shrink-0 transition-colors',
             currentCategory === category
               ? 'bg-blue-600 text-white border-blue-600'
               : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
@@ -64,11 +64,11 @@ function CategoryButtonsClient() {
 
 function CategoryButtonsFallback() {
   return (
-    <div className="flex flex-wrap gap-3 sm:flex-nowrap sm:overflow-x-auto sm:-mx-4 sm:px-4 sm:hide-scrollbar">
+    <div className="flex overflow-x-auto whitespace-nowrap gap-1 sm:gap-2 hide-scrollbar">
       {categories.map((category) => (
         <span
           key={category}
-          className="whitespace-nowrap px-4 py-2 rounded-full text-sm border bg-gray-200 text-gray-500"
+          className="px-3 py-1 text-xs sm:text-sm rounded-full border bg-gray-200 text-gray-500 flex-shrink-0"
         >
           {category}
         </span>
